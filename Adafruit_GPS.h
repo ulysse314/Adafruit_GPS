@@ -103,6 +103,13 @@ All text above must be included in any redistribution
 
 class Adafruit_GPS {
  public:
+  enum Antenna {
+    UnknownAntenna,
+    ExternalProblemAntenna,
+    InternalAntenna,
+    ExternalAntenna,
+  };
+
   void begin(uint32_t baud); 
 
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
@@ -145,6 +152,7 @@ class Adafruit_GPS {
   char lat, lon, mag;
   boolean fix;
   uint8_t fixquality, satellites;
+  enum Antenna antenna;
 
   boolean waitForSentence(const char *wait, uint8_t max = MAXWAITSENTENCE);
   boolean LOCUS_StartLogger(void);
@@ -158,6 +166,7 @@ class Adafruit_GPS {
 
   boolean parse_GPGGA(char *nmea);
   boolean parse_GPRMC(char *nmea);
+  boolean parse_PGTOP(char *nmea);
 
   uint8_t parseResponse(char *response);
 #if defined(__AVR__) && defined(USE_SW_SERIAL)

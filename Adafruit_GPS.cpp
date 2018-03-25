@@ -59,6 +59,8 @@ boolean Adafruit_GPS::parse(char *nmea) {
     return parse_GPGGA(nmea);
   } else if (strstr(nmea, "$GPRMC")) {
     return parse_GPRMC(nmea);
+  } else if (strstr(nmea, "$PGTOP")) {
+    return parse_PGTOP(nmea);
   }
 
   return false;
@@ -264,6 +266,22 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
   }
   // we dont parse the remaining, yet!
   return true;
+}
+
+boolean Adafruit_GPS::parse_PGTOP(char *nmea) {
+  char *p = nmea;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  int value = atoi(p);
+  if (value == 1) {
+    antenna = Adafruit_GPS::ExternalProblemAntenna;
+  } else if (value == 2) {
+    antenna = Adafruit_GPS::InternalAntenna;
+  } else if (value == 3) {
+    antenna = Adafruit_GPS::ExternalAntenna;
+  } else {
+    antenna = Adafruit_GPS::UnknownAntenna;
+  }
 }
 
 char Adafruit_GPS::read(void) {
