@@ -62,7 +62,6 @@ boolean Adafruit_GPS::parse(char *nmea) {
   } else if (strstr(nmea, "$PGTOP")) {
     return parse_PGTOP(nmea);
   }
-
   return false;
 }
 
@@ -282,6 +281,7 @@ boolean Adafruit_GPS::parse_PGTOP(char *nmea) {
   } else {
     antenna = Adafruit_GPS::UnknownAntenna;
   }
+  return true;
 }
 
 char Adafruit_GPS::read(void) {
