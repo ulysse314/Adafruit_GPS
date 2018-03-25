@@ -29,23 +29,23 @@ volatile char *lastline;
 volatile boolean recvdflag;
 volatile boolean inStandbyMode;
 
-
 boolean Adafruit_GPS::parse(char *nmea) {
   // do checksum check
 
   // first look if we even have one
-  if (nmea[strlen(nmea)-4] == '*') {
-    uint16_t sum = parseHex(nmea[strlen(nmea)-3]) * 16;
-    sum += parseHex(nmea[strlen(nmea)-2]);
+  if (nmea[strlen(nmea)-4] != '*')
+    return false;
 
-    // check checksum 
-    for (uint8_t i=2; i < (strlen(nmea)-4); i++) {
-      sum ^= nmea[i];
-    }
-    if (sum != 0) {
-      // bad checksum :(
-      return false;
-    }
+  uint16_t sum = parseHex(nmea[strlen(nmea)-3]) * 16;
+  sum += parseHex(nmea[strlen(nmea)-2]);
+
+  // check checksum
+  for (uint8_t i=2; i < (strlen(nmea)-4); i++) {
+    sum ^= nmea[i];
+  }
+  if (sum != 0) {
+    // bad checksum :(
+    return false;
   }
   // look for a few common sentences
   if (strstr(nmea, "$GPGGA")) {
@@ -183,7 +183,7 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
 
   p = strchr(p, ',')+1;
   // Serial.println(p);
-  if (p[0] == 'A') 
+  if (p[0] == 'A')
     fix = true;
   else if (p[0] == 'V')
     fix = false;
@@ -282,7 +282,7 @@ char Adafruit_GPS::read(void) {
   if(gpsSwSerial) {
     if(!gpsSwSerial->available()) return c;
     c = gpsSwSerial->read();
-  } else 
+  } else
 #endif
   {
     if(!gpsHwSerial->available()) return c;
@@ -325,7 +325,7 @@ char Adafruit_GPS::read(void) {
 #if ARDUINO >= 100
 Adafruit_GPS::Adafruit_GPS(SoftwareSerial *ser)
 #else
-Adafruit_GPS::Adafruit_GPS(NewSoftSerial *ser) 
+Adafruit_GPS::Adafruit_GPS(NewSoftSerial *ser)
 #endif
 {
   common_init();     // Set everything to common state, then...
@@ -363,9 +363,9 @@ void Adafruit_GPS::common_init(void) {
 void Adafruit_GPS::begin(uint32_t baud)
 {
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
-  if(gpsSwSerial) 
+  if(gpsSwSerial)
     gpsSwSerial->begin(baud);
-  else 
+  else
 #endif
     gpsHwSerial->begin(baud);
 
@@ -374,7 +374,7 @@ void Adafruit_GPS::begin(uint32_t baud)
 
 void Adafruit_GPS::sendCommand(const char *str) {
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
-  if(gpsSwSerial) 
+  if(gpsSwSerial)
     gpsSwSerial->println(str);
   else
 #endif
@@ -415,7 +415,7 @@ boolean Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
   while (i < max) {
     read();
 
-    if (newNMEAreceived()) { 
+    if (newNMEAreceived()) {
       char *nmea = lastNMEA();
       strncpy(str, nmea, 20);
       str[19] = 0;
@@ -455,11 +455,11 @@ boolean Adafruit_GPS::LOCUS_ReadStatus(void) {
 
   response = strchr(response, ',');
   for (i=0; i<10; i++) {
-    if (!response || (response[0] == 0) || (response[0] == '*')) 
+    if (!response || (response[0] == 0) || (response[0] == '*'))
       break;
     response++;
     parsed[i]=0;
-    while ((response[0] != ',') && 
+    while ((response[0] != ',') &&
 	   (response[0] != '*') && (response[0] != 0)) {
       parsed[i] *= 10;
       char c = response[0];
@@ -473,7 +473,7 @@ boolean Adafruit_GPS::LOCUS_ReadStatus(void) {
   LOCUS_serial = parsed[0];
   LOCUS_type = parsed[1];
   if (isAlpha(parsed[2])) {
-    parsed[2] = parsed[2] - 'a' + 10; 
+    parsed[2] = parsed[2] - 'a' + 10;
   }
   LOCUS_mode = parsed[2];
   LOCUS_config = parsed[3];
