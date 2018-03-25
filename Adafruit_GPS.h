@@ -12,7 +12,7 @@ Adafruit invests time and resources providing this open source code,
 please support Adafruit and open-source hardware by purchasing 
 products from Adafruit!
 
-Written by Limor Fried/Ladyada  for Adafruit Industries.  
+Written by Limor Fried/Ladyada  for Adafruit Industries.
 BSD license, check license.txt for more information
 All text above must be included in any redistribution
 ****************************************/
@@ -119,7 +119,7 @@ class Adafruit_GPS {
   void common_init(void);
 
   void sendCommand(const char *);
-  
+
   void pause(boolean b);
 
   boolean parseNMEA(char *response);
@@ -155,7 +155,10 @@ class Adafruit_GPS {
   uint8_t LOCUS_type, LOCUS_mode, LOCUS_config, LOCUS_interval, LOCUS_distance, LOCUS_speed, LOCUS_status, LOCUS_percent;
  private:
   boolean paused;
-  
+
+  boolean parse_GPGGA(char *nmea);
+  boolean parse_GPRMC(char *nmea);
+
   uint8_t parseResponse(char *response);
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
   #if ARDUINO >= 100
