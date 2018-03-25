@@ -29,6 +29,13 @@ volatile char *lastline;
 volatile boolean recvdflag;
 volatile boolean inStandbyMode;
 
+static char *next_data(char *nmea) {
+  nmea = strchr(nmea, ',');
+  if (!nmea) return NULL;
+  nmea++;
+  return (*nmea) ? nmea : NULL;
+}
+
 boolean Adafruit_GPS::parse(char *nmea) {
   // do checksum check
 
@@ -64,7 +71,7 @@ boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
   int32_t degree;
   long minutes;
   char degreebuff[10];
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   float timef = atof(p);
   uint32_t time = timef;
   hour = time / 10000;
@@ -74,7 +81,7 @@ boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
   milliseconds = fmod(timef, 1.0) * 1000;
 
   // parse out latitude
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     strncpy(degreebuff, p, 2);
@@ -92,7 +99,7 @@ boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
     latitudeDegrees += int(latitude/100);
   }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     if (p[0] == 'S') latitudeDegrees *= -1.0;
@@ -103,7 +110,7 @@ boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
   }
 
   // parse out longitude
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     strncpy(degreebuff, p, 3);
@@ -121,7 +128,7 @@ boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
     longitudeDegrees += int(longitude/100);
   }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     if (p[0] == 'W') longitudeDegrees *= -1.0;
@@ -131,36 +138,26 @@ boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
     else return false;
   }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
-  {
     fixquality = atoi(p);
-  }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
-  {
     satellites = atoi(p);
-  }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
-  {
     HDOP = atof(p);
-  }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
-  {
     altitude = atof(p);
-  }
 
-  p = strchr(p, ',')+1;
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
-  {
     geoidheight = atof(p);
-  }
   return true;
 }
 
@@ -172,7 +169,7 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
   int32_t degree;
   long minutes;
   char degreebuff[10];
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   float timef = atof(p);
   uint32_t time = timef;
   hour = time / 10000;
@@ -181,7 +178,7 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
 
   milliseconds = fmod(timef, 1.0) * 1000;
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   // Serial.println(p);
   if (p[0] == 'A')
     fix = true;
@@ -191,7 +188,7 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
     return false;
 
   // parse out latitude
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     strncpy(degreebuff, p, 2);
@@ -209,7 +206,7 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
     latitudeDegrees += int(latitude/100);
   }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     if (p[0] == 'S') latitudeDegrees *= -1.0;
@@ -220,7 +217,7 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
   }
 
   // parse out longitude
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     strncpy(degreebuff, p, 3);
@@ -238,7 +235,7 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
     longitudeDegrees += int(longitude/100);
   }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     if (p[0] == 'W') longitudeDegrees *= -1.0;
@@ -248,20 +245,16 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
     else return false;
   }
   // speed
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
-  {
     speed = atof(p);
-  }
 
   // angle
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
-  {
     angle = atof(p);
-  }
 
-  p = strchr(p, ',')+1;
+  p = next_data(p); if (!p) return false;
   if (',' != *p)
   {
     uint32_t fulldate = atof(p);
@@ -453,7 +446,7 @@ boolean Adafruit_GPS::LOCUS_ReadStatus(void) {
 
   for (i=0; i<10; i++) parsed[i] = -1;
 
-  response = strchr(response, ',');
+  response = next_data(response); if (!response) return false;
   for (i=0; i<10; i++) {
     if (!response || (response[0] == 0) || (response[0] == '*'))
       break;
