@@ -26,8 +26,8 @@ volatile uint8_t lineidx=0;
 // pointers to the double buffers
 volatile char *currentline;
 volatile char *lastline;
-volatile boolean recvdflag;
-volatile boolean inStandbyMode;
+volatile bool recvdflag;
+volatile bool inStandbyMode;
 
 static char *next_data(char *nmea) {
   nmea = strchr(nmea, ',');
@@ -68,7 +68,7 @@ static bool decode_angle(char *buffer, int32_t *angle_degree_minute, int32_t *an
   return true;
 }
 
-boolean Adafruit_GPS::parse(char *nmea) {
+bool Adafruit_GPS::parse(char *nmea) {
   // do checksum check
   // first look if we even have one
   if (nmea[strlen(nmea)-4] != '*')
@@ -97,7 +97,7 @@ boolean Adafruit_GPS::parse(char *nmea) {
   return false;
 }
 
-char Adafruit_GPS::read(void) {
+char Adafruit_GPS::read() {
   char c = 0;
 
   if (paused) return c;
@@ -164,7 +164,7 @@ Adafruit_GPS::Adafruit_GPS(HardwareSerial *ser) {
 }
 
 // Initialization code used by all constructor types
-void Adafruit_GPS::common_init(void) {
+void Adafruit_GPS::common_init() {
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
   gpsSwSerial = NULL; // Set both to NULL, then override correct
 #endif
@@ -178,7 +178,7 @@ void Adafruit_GPS::common_init(void) {
   hour = minute = seconds = year = month = day =
     fixquality = satellites = 0; // uint8_t
   lat = lon = mag = 0; // char
-  fix = false; // boolean
+  fix = false; // bool
   milliseconds = 0; // uint16_t
   satellites_in_views = 0;
   geoidheight = altitude = speed = angle = magvariation = HDOP = 0.0; // float
@@ -206,15 +206,15 @@ void Adafruit_GPS::sendCommand(const char *str) {
     gpsHwSerial->println(str);
 }
 
-boolean Adafruit_GPS::newNMEAreceived(void) {
+bool Adafruit_GPS::newNMEAreceived() {
   return recvdflag;
 }
 
-void Adafruit_GPS::pause(boolean p) {
+void Adafruit_GPS::pause(bool p) {
   paused = p;
 }
 
-char *Adafruit_GPS::lastNMEA(void) {
+char *Adafruit_GPS::lastNMEA() {
   recvdflag = false;
   return (char *)lastline;
 }
@@ -233,7 +233,7 @@ uint8_t Adafruit_GPS::parseHex(char c) {
     return 0;
 }
 
-boolean Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
+bool Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
   char str[20];
 
   uint8_t i=0;
@@ -254,19 +254,19 @@ boolean Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
   return false;
 }
 
-boolean Adafruit_GPS::LOCUS_StartLogger(void) {
+bool Adafruit_GPS::LOCUS_StartLogger() {
   sendCommand(PMTK_LOCUS_STARTLOG);
   recvdflag = false;
   return waitForSentence(PMTK_LOCUS_STARTSTOPACK);
 }
 
-boolean Adafruit_GPS::LOCUS_StopLogger(void) {
+bool Adafruit_GPS::LOCUS_StopLogger() {
   sendCommand(PMTK_LOCUS_STOPLOG);
   recvdflag = false;
   return waitForSentence(PMTK_LOCUS_STARTSTOPACK);
 }
 
-boolean Adafruit_GPS::LOCUS_ReadStatus(void) {
+bool Adafruit_GPS::LOCUS_ReadStatus() {
   sendCommand(PMTK_LOCUS_QUERY_STATUS);
 
   if (! waitForSentence("$PMTKLOG"))
@@ -313,7 +313,7 @@ boolean Adafruit_GPS::LOCUS_ReadStatus(void) {
 }
 
 // Standby Mode Switches
-boolean Adafruit_GPS::standby(void) {
+bool Adafruit_GPS::standby() {
   if (inStandbyMode) {
     return false;  // Returns false if already in standby mode, so that you do not wake it up by sending commands to GPS
   }
@@ -325,7 +325,7 @@ boolean Adafruit_GPS::standby(void) {
   }
 }
 
-boolean Adafruit_GPS::wakeup(void) {
+bool Adafruit_GPS::wakeup() {
   if (inStandbyMode) {
    inStandbyMode = false;
     sendCommand("");  // send byte to wake it up
@@ -336,7 +336,7 @@ boolean Adafruit_GPS::wakeup(void) {
   }
 }
 
-boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
+bool Adafruit_GPS::parse_GPGGA(char *nmea) {
   // found GGA
   char *p = nmea;
   // get time
@@ -377,7 +377,7 @@ boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
   return true;
 }
 
-boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
+bool Adafruit_GPS::parse_GPRMC(char *nmea) {
  // found RMC
   char *p = nmea;
 
@@ -427,7 +427,7 @@ boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
   return true;
 }
 
-boolean Adafruit_GPS::parse_PGTOP(char *nmea) {
+bool Adafruit_GPS::parse_PGTOP(char *nmea) {
   char *p = nmea;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
@@ -444,7 +444,7 @@ boolean Adafruit_GPS::parse_PGTOP(char *nmea) {
   return true;
 }
 
-boolean Adafruit_GPS::parse_GPGSV(char *nmea) {
+bool Adafruit_GPS::parse_GPGSV(char *nmea) {
   // $GPGSV,4,1,14,22,87,059,12,01,82,080,23,03,69,248,34,11,67,155,15*7A
   char *p = nmea;
   p = next_data(p); if (!p) return false;

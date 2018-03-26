@@ -122,22 +122,22 @@ class Adafruit_GPS {
 #endif
   Adafruit_GPS(HardwareSerial *ser); // Constructor when using HardwareSerial
 
-  char *lastNMEA(void);
-  boolean newNMEAreceived();
-  void common_init(void);
+  char *lastNMEA();
+  bool newNMEAreceived();
+  void common_init();
 
   void sendCommand(const char *);
 
-  void pause(boolean b);
+  void pause(bool b);
 
-  boolean parseNMEA(char *response);
+  bool parseNMEA(char *response);
   uint8_t parseHex(char c);
 
-  char read(void);
-  boolean parse(char *);
+  char read();
+  bool parse(char *);
 
-  boolean wakeup(void);
-  boolean standby(void);
+  bool wakeup();
+  bool standby();
 
   uint8_t hour, minute, seconds, year, month, day;
   uint16_t milliseconds;
@@ -148,25 +148,25 @@ class Adafruit_GPS {
   float geoidheight, altitude;
   float speed, angle, magvariation, HDOP;
   char lat, lon, mag;
-  boolean fix;
+  bool fix;
   uint8_t fixquality, satellites;
   uint8_t satellites_in_views;
   enum Antenna antenna;
 
-  boolean waitForSentence(const char *wait, uint8_t max = MAXWAITSENTENCE);
-  boolean LOCUS_StartLogger(void);
-  boolean LOCUS_StopLogger(void);
-  boolean LOCUS_ReadStatus(void);
+  bool waitForSentence(const char *wait, uint8_t max = MAXWAITSENTENCE);
+  bool LOCUS_StartLogger();
+  bool LOCUS_StopLogger();
+  bool LOCUS_ReadStatus();
 
   uint16_t LOCUS_serial, LOCUS_records;
   uint8_t LOCUS_type, LOCUS_mode, LOCUS_config, LOCUS_interval, LOCUS_distance, LOCUS_speed, LOCUS_status, LOCUS_percent;
  private:
-  boolean paused;
+  bool paused;
 
-  boolean parse_GPGGA(char *nmea);
-  boolean parse_GPRMC(char *nmea);
-  boolean parse_PGTOP(char *nmea);
-  boolean parse_GPGSV(char *nmea);
+  bool parse_GPGGA(char *nmea);
+  bool parse_GPRMC(char *nmea);
+  bool parse_PGTOP(char *nmea);
+  bool parse_GPGSV(char *nmea);
   bool parse_latitude_longitude(char **nmea);
 
   uint8_t parseResponse(char *response);
