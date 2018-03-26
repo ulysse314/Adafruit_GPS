@@ -97,163 +97,6 @@ boolean Adafruit_GPS::parse(char *nmea) {
   return false;
 }
 
-boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
-  // found GGA
-  char *p = nmea;
-  // get time
-  int32_t degree;
-  long minutes;
-  char degreebuff[10];
-  p = next_data(p); if (!p) return false;
-  float timef = atof(p);
-  uint32_t time = timef;
-  hour = time / 10000;
-  minute = (time % 10000) / 100;
-  seconds = (time % 100);
-
-  milliseconds = fmod(timef, 1.0) * 1000;
-
-  parse_latitude_longitude(&p);
-
-  p = next_data(p); if (!p) return false;
-  if (',' != *p)
-    fixquality = atoi(p);
-
-  p = next_data(p); if (!p) return false;
-  if (',' != *p)
-    satellites = atoi(p);
-
-  p = next_data(p); if (!p) return false;
-  if (',' != *p)
-    HDOP = atof(p);
-
-  p = next_data(p); if (!p) return false;
-  if (',' != *p)
-    altitude = atof(p);
-
-  p = next_data(p); if (!p) return false;
-  p = next_data(p); if (!p) return false;
-  if (',' != *p)
-    geoidheight = atof(p);
-  return true;
-}
-
-boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
- // found RMC
-  char *p = nmea;
-
-  // get time
-  int32_t degree;
-  long minutes;
-  char degreebuff[10];
-  p = next_data(p); if (!p) return false;
-  float timef = atof(p);
-  uint32_t time = timef;
-  hour = time / 10000;
-  minute = (time % 10000) / 100;
-  seconds = (time % 100);
-
-  milliseconds = fmod(timef, 1.0) * 1000;
-
-  p = next_data(p); if (!p) return false;
-  // Serial.println(p);
-  if (p[0] == 'A')
-    fix = true;
-  else if (p[0] == 'V')
-    fix = false;
-  else
-    return false;
-
-  parse_latitude_longitude(&p);
-
-  // speed
-  p = next_data(p); if (!p) return false;
-  if (',' != *p)
-    speed = atof(p);
-
-  // angle
-  p = next_data(p); if (!p) return false;
-  if (',' != *p)
-    angle = atof(p);
-
-  p = next_data(p); if (!p) return false;
-  if (',' != *p)
-  {
-    uint32_t fulldate = atof(p);
-    day = fulldate / 10000;
-    month = (fulldate % 10000) / 100;
-    year = (fulldate % 100);
-  }
-  // we dont parse the remaining, yet!
-  return true;
-}
-
-boolean Adafruit_GPS::parse_PGTOP(char *nmea) {
-  char *p = nmea;
-  p = next_data(p); if (!p) return false;
-  p = next_data(p); if (!p) return false;
-  int value = atoi(p);
-  if (value == 1) {
-    antenna = Adafruit_GPS::ExternalProblemAntenna;
-  } else if (value == 2) {
-    antenna = Adafruit_GPS::InternalAntenna;
-  } else if (value == 3) {
-    antenna = Adafruit_GPS::ExternalAntenna;
-  } else {
-    antenna = Adafruit_GPS::UnknownAntenna;
-  }
-  return true;
-}
-
-boolean Adafruit_GPS::parse_GPGSV(char *nmea) {
-  // $GPGSV,4,1,14,22,87,059,12,01,82,080,23,03,69,248,34,11,67,155,15*7A
-  char *p = nmea;
-  p = next_data(p); if (!p) return false;
-  p = next_data(p); if (!p) return false;
-  p = next_data(p); if (!p) return false;
-  satellites_in_views = atoi(p);
-  return true;
-}
-
-bool Adafruit_GPS::parse_latitude_longitude(char **buffer) {
-  if (!buffer) return false;
-  // parse out latitude
-  *buffer = next_data(*buffer); if (!*buffer) return false;
-  if (',' != **buffer) {
-    if (!decode_angle(*buffer, &latitude_degree_minute, &latitude_degree)) {
-      return false;
-    }
-  }
-  *buffer = next_data(*buffer); if (!*buffer) return false;
-  if (',' != **buffer) {
-    if ((*buffer)[0] == 'S') {
-      latitude_degree = -latitude_degree;
-    }
-    if ((*buffer)[0] == 'N') lat = 'N';
-    else if ((*buffer)[0] == 'S') lat = 'S';
-    else if ((*buffer)[0] == ',') lat = 0;
-    else return false;
-  }
-
-  // parse out longitude
-  *buffer = next_data(*buffer); if (!*buffer) return false;
-  if (',' != **buffer) {
-    if (!decode_angle(*buffer, &longitude_degree_minute, &longitude_degree)) {
-      return false;
-    }
-  }
-  *buffer = next_data(*buffer); if (!*buffer) return false;
-  if (',' != **buffer) {
-    if ((*buffer)[0] == 'W') {
-      longitude_degree = -longitude_degree;
-    }
-    if ((*buffer)[0] == 'W') lon = 'W';
-    else if ((*buffer)[0] == 'E') lon = 'E';
-    else if ((*buffer)[0] == ',') lon = 0;
-    else return false;
-  }
-}
-
 char Adafruit_GPS::read(void) {
   char c = 0;
 
@@ -490,5 +333,162 @@ boolean Adafruit_GPS::wakeup(void) {
   }
   else {
       return false;  // Returns false if not in standby mode, nothing to wakeup
+  }
+}
+
+boolean Adafruit_GPS::parse_GPGGA(char *nmea) {
+  // found GGA
+  char *p = nmea;
+  // get time
+  int32_t degree;
+  long minutes;
+  char degreebuff[10];
+  p = next_data(p); if (!p) return false;
+  float timef = atof(p);
+  uint32_t time = timef;
+  hour = time / 10000;
+  minute = (time % 10000) / 100;
+  seconds = (time % 100);
+
+  milliseconds = fmod(timef, 1.0) * 1000;
+
+  parse_latitude_longitude(&p);
+
+  p = next_data(p); if (!p) return false;
+  if (',' != *p)
+    fixquality = atoi(p);
+
+  p = next_data(p); if (!p) return false;
+  if (',' != *p)
+    satellites = atoi(p);
+
+  p = next_data(p); if (!p) return false;
+  if (',' != *p)
+    HDOP = atof(p);
+
+  p = next_data(p); if (!p) return false;
+  if (',' != *p)
+    altitude = atof(p);
+
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  if (',' != *p)
+    geoidheight = atof(p);
+  return true;
+}
+
+boolean Adafruit_GPS::parse_GPRMC(char *nmea) {
+ // found RMC
+  char *p = nmea;
+
+  // get time
+  int32_t degree;
+  long minutes;
+  char degreebuff[10];
+  p = next_data(p); if (!p) return false;
+  float timef = atof(p);
+  uint32_t time = timef;
+  hour = time / 10000;
+  minute = (time % 10000) / 100;
+  seconds = (time % 100);
+
+  milliseconds = fmod(timef, 1.0) * 1000;
+
+  p = next_data(p); if (!p) return false;
+  // Serial.println(p);
+  if (p[0] == 'A')
+    fix = true;
+  else if (p[0] == 'V')
+    fix = false;
+  else
+    return false;
+
+  parse_latitude_longitude(&p);
+
+  // speed
+  p = next_data(p); if (!p) return false;
+  if (',' != *p)
+    speed = atof(p);
+
+  // angle
+  p = next_data(p); if (!p) return false;
+  if (',' != *p)
+    angle = atof(p);
+
+  p = next_data(p); if (!p) return false;
+  if (',' != *p)
+  {
+    uint32_t fulldate = atof(p);
+    day = fulldate / 10000;
+    month = (fulldate % 10000) / 100;
+    year = (fulldate % 100);
+  }
+  // we dont parse the remaining, yet!
+  return true;
+}
+
+boolean Adafruit_GPS::parse_PGTOP(char *nmea) {
+  char *p = nmea;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  int value = atoi(p);
+  if (value == 1) {
+    antenna = Adafruit_GPS::ExternalProblemAntenna;
+  } else if (value == 2) {
+    antenna = Adafruit_GPS::InternalAntenna;
+  } else if (value == 3) {
+    antenna = Adafruit_GPS::ExternalAntenna;
+  } else {
+    antenna = Adafruit_GPS::UnknownAntenna;
+  }
+  return true;
+}
+
+boolean Adafruit_GPS::parse_GPGSV(char *nmea) {
+  // $GPGSV,4,1,14,22,87,059,12,01,82,080,23,03,69,248,34,11,67,155,15*7A
+  char *p = nmea;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  satellites_in_views = atoi(p);
+  return true;
+}
+
+bool Adafruit_GPS::parse_latitude_longitude(char **buffer) {
+  if (!buffer) return false;
+  // parse out latitude
+  *buffer = next_data(*buffer); if (!*buffer) return false;
+  if (',' != **buffer) {
+    if (!decode_angle(*buffer, &latitude_degree_minute, &latitude_degree)) {
+      return false;
+    }
+  }
+  *buffer = next_data(*buffer); if (!*buffer) return false;
+  if (',' != **buffer) {
+    if ((*buffer)[0] == 'S') {
+      latitude_degree = -latitude_degree;
+    }
+    if ((*buffer)[0] == 'N') lat = 'N';
+    else if ((*buffer)[0] == 'S') lat = 'S';
+    else if ((*buffer)[0] == ',') lat = 0;
+    else return false;
+  }
+
+  // parse out longitude
+  *buffer = next_data(*buffer); if (!*buffer) return false;
+  if (',' != **buffer) {
+    if (!decode_angle(*buffer, &longitude_degree_minute, &longitude_degree)) {
+      return false;
+    }
+  }
+  *buffer = next_data(*buffer); if (!*buffer) return false;
+  if (',' != **buffer) {
+    if ((*buffer)[0] == 'W') {
+      longitude_degree = -longitude_degree;
+    }
+    if ((*buffer)[0] == 'W') lon = 'W';
+    else if ((*buffer)[0] == 'E') lon = 'E';
+    else if ((*buffer)[0] == ',') lon = 0;
+    else return false;
   }
 }
