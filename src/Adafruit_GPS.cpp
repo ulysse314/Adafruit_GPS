@@ -29,14 +29,14 @@ volatile char *lastline;
 volatile bool recvdflag;
 volatile bool inStandbyMode;
 
-static char *next_data(char *nmea) {
+static const char *next_data(const char *nmea) {
   nmea = strchr(nmea, ',');
   if (!nmea) return NULL;
   nmea++;
   return (*nmea) ? nmea : NULL;
 }
 
-static bool decode_angle(char *buffer, int32_t *angle_degree_minute, int32_t *angle_degree) {
+static bool decode_angle(const char *buffer, int32_t *angle_degree_minute, int32_t *angle_degree) {
   char degreebuff[10];
   if (!buffer || strlen(buffer) < 6 || !angle_degree_minute || !angle_degree) {
     return false;
@@ -68,7 +68,7 @@ static bool decode_angle(char *buffer, int32_t *angle_degree_minute, int32_t *an
   return true;
 }
 
-bool Adafruit_GPS::parse(char *nmea) {
+bool Adafruit_GPS::parse(const char *nmea) {
   // do checksum check
   // first look if we even have one
   if (nmea[strlen(nmea)-4] != '*')
@@ -214,7 +214,7 @@ void Adafruit_GPS::pause(bool p) {
   paused = p;
 }
 
-char *Adafruit_GPS::lastNMEA() {
+const char *Adafruit_GPS::lastNMEA() {
   recvdflag = false;
   return (char *)lastline;
 }
@@ -241,7 +241,7 @@ bool Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
     read();
 
     if (newNMEAreceived()) {
-      char *nmea = lastNMEA();
+      const char *nmea = lastNMEA();
       strncpy(str, nmea, 20);
       str[19] = 0;
       i++;
@@ -272,7 +272,7 @@ bool Adafruit_GPS::LOCUS_ReadStatus() {
   if (! waitForSentence("$PMTKLOG"))
     return false;
 
-  char *response = lastNMEA();
+  const char *response = lastNMEA();
   uint16_t parsed[10];
   uint8_t i;
 
@@ -336,9 +336,9 @@ bool Adafruit_GPS::wakeup() {
   }
 }
 
-bool Adafruit_GPS::parse_GPGGA(char *nmea) {
+bool Adafruit_GPS::parse_GPGGA(const char *nmea) {
   // found GGA
-  char *p = nmea;
+  const char *p = nmea;
   // get time
   int32_t degree;
   long minutes;
@@ -377,9 +377,9 @@ bool Adafruit_GPS::parse_GPGGA(char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_GPRMC(char *nmea) {
+bool Adafruit_GPS::parse_GPRMC(const char *nmea) {
  // found RMC
-  char *p = nmea;
+  const char *p = nmea;
 
   // get time
   int32_t degree;
@@ -427,8 +427,8 @@ bool Adafruit_GPS::parse_GPRMC(char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_PGTOP(char *nmea) {
-  char *p = nmea;
+bool Adafruit_GPS::parse_PGTOP(const char *nmea) {
+  const char *p = nmea;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
   int value = atoi(p);
@@ -444,9 +444,9 @@ bool Adafruit_GPS::parse_PGTOP(char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_GPGSV(char *nmea) {
+bool Adafruit_GPS::parse_GPGSV(const char *nmea) {
   // $GPGSV,4,1,14,22,87,059,12,01,82,080,23,03,69,248,34,11,67,155,15*7A
-  char *p = nmea;
+  const char *p = nmea;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
@@ -454,7 +454,7 @@ bool Adafruit_GPS::parse_GPGSV(char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_latitude_longitude(char **buffer) {
+bool Adafruit_GPS::parse_latitude_longitude(const char **buffer) {
   if (!buffer) return false;
   // parse out latitude
   *buffer = next_data(*buffer); if (!*buffer) return false;

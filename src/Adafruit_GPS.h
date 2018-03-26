@@ -122,7 +122,7 @@ class Adafruit_GPS {
 #endif
   Adafruit_GPS(HardwareSerial *ser); // Constructor when using HardwareSerial
 
-  char *lastNMEA();
+  const char *lastNMEA();
   bool newNMEAreceived();
   void common_init();
 
@@ -134,7 +134,7 @@ class Adafruit_GPS {
   uint8_t parseHex(char c);
 
   char read();
-  bool parse(char *);
+  bool parse(const char *nmea);
 
   bool wakeup();
   bool standby();
@@ -163,13 +163,12 @@ class Adafruit_GPS {
  private:
   bool paused;
 
-  bool parse_GPGGA(char *nmea);
-  bool parse_GPRMC(char *nmea);
-  bool parse_PGTOP(char *nmea);
-  bool parse_GPGSV(char *nmea);
-  bool parse_latitude_longitude(char **nmea);
+  bool parse_GPGGA(const char *nmea);
+  bool parse_GPRMC(const char *nmea);
+  bool parse_PGTOP(const char *nmea);
+  bool parse_GPGSV(const char *nmea);
+  bool parse_latitude_longitude(const char **nmea);
 
-  uint8_t parseResponse(char *response);
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
   #if ARDUINO >= 100
     SoftwareSerial *gpsSwSerial;
