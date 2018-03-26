@@ -49,6 +49,7 @@ All text above must be included in any redistribution
 // Can't fix position faster than 5 times a second!
 
 
+#define PMTK_SET_BAUD_115200 "$PMTK251,115200*1F"
 #define PMTK_SET_BAUD_57600 "$PMTK251,57600*2C"
 #define PMTK_SET_BAUD_9600 "$PMTK251,9600*17"
 
@@ -140,18 +141,16 @@ class Adafruit_GPS {
 
   uint8_t hour, minute, seconds, year, month, day;
   uint16_t milliseconds;
-  // Floating point latitude and longitude value in degrees.
-  float latitude, longitude;
-  // Fixed point latitude and longitude value with degrees stored in units of 1/100000 degrees,
-  // and minutes stored in units of 1/100000 degrees.  See pull #13 for more details:
-  //   https://github.com/adafruit/Adafruit-GPS-Library/pull/13
-  int32_t latitude_fixed, longitude_fixed;
-  float latitudeDegrees, longitudeDegrees;
+  // Int degree * 10000000 + floating minute * 100000.
+  int32_t latitude_degree_minute, longitude_degree_minute;
+  // Floating degree * 10000000.
+  int32_t latitude_degree, longitude_degree;
   float geoidheight, altitude;
   float speed, angle, magvariation, HDOP;
   char lat, lon, mag;
   boolean fix;
   uint8_t fixquality, satellites;
+  uint8_t satellites_in_views;
   enum Antenna antenna;
 
   boolean waitForSentence(const char *wait, uint8_t max = MAXWAITSENTENCE);
@@ -167,6 +166,8 @@ class Adafruit_GPS {
   boolean parse_GPGGA(char *nmea);
   boolean parse_GPRMC(char *nmea);
   boolean parse_PGTOP(char *nmea);
+  boolean parse_GPGSV(char *nmea);
+  bool parse_latitude_longitude(char **nmea);
 
   uint8_t parseResponse(char *response);
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
