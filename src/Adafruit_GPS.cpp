@@ -177,7 +177,7 @@ void Adafruit_GPS::common_init() {
 
   hour = minute = seconds = year = month = day =
     fixquality = satellites = 0; // uint8_t
-  lat = lon = mag = 0; // char
+  mag = 0; // char
   fix = false; // bool
   milliseconds = 0; // uint16_t
   satellites_in_views = 0;
@@ -467,28 +467,25 @@ bool Adafruit_GPS::parse_latitude_longitude(const char **buffer) {
   if (',' != **buffer) {
     if ((*buffer)[0] == 'S') {
       latitude_degree = -latitude_degree;
+      latitude_degree_minute = -latitude_degree_minute;
     }
-    if ((*buffer)[0] == 'N') lat = 'N';
-    else if ((*buffer)[0] == 'S') lat = 'S';
-    else if ((*buffer)[0] == ',') lat = 0;
-    else return false;
+    if ((*buffer)[0] != 'N' && (*buffer)[0] != 'S' && (*buffer)[0] != ',')
+      return false;
   }
 
   // parse out longitude
   *buffer = next_data(*buffer); if (!*buffer) return false;
   if (',' != **buffer) {
-    if (!decode_angle(*buffer, &longitude_degree_minute, &longitude_degree)) {
+    if (!decode_angle(*buffer, &longitude_degree_minute, &longitude_degree))
       return false;
-    }
   }
   *buffer = next_data(*buffer); if (!*buffer) return false;
   if (',' != **buffer) {
     if ((*buffer)[0] == 'W') {
       longitude_degree = -longitude_degree;
+      longitude_degree_minute = -longitude_degree_minute;
     }
-    if ((*buffer)[0] == 'W') lon = 'W';
-    else if ((*buffer)[0] == 'E') lon = 'E';
-    else if ((*buffer)[0] == ',') lon = 0;
-    else return false;
+    if ((*buffer)[0] != 'E' && (*buffer)[0] != 'W' && (*buffer)[0] != ',')
+      return false;
   }
 }

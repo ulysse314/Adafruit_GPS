@@ -141,13 +141,13 @@ class Adafruit_GPS {
 
   uint8_t hour, minute, seconds, year, month, day;
   uint16_t milliseconds;
-  // Int degree * 10000000 + floating minute * 100000.
+  // Int degree * 10000000 + floating minute * 100000 (signed).
   int32_t latitude_degree_minute, longitude_degree_minute;
-  // Floating degree * 10000000.
+  // Floating degree * 10000000 (signed).
   int32_t latitude_degree, longitude_degree;
   float geoidheight, altitude;
   float speed, angle, magvariation, HDOP;
-  char lat, lon, mag;
+  char mag;
   bool fix;
   uint8_t fixquality, satellites;
   uint8_t satellites_in_views;
