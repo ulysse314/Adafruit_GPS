@@ -187,6 +187,7 @@ void Adafruit_GPS::common_init() {
   PDOP = 0.;
   HDOP = 0.;
   VDOP = 0.;
+  mode = 0;
   latitude_degree_minute = longitude_degree_minute = latitude_degree = longitude_degree = 0;
 }
 
@@ -460,10 +461,11 @@ bool Adafruit_GPS::parse_GPGSV(const char *nmea) {
 }
 
 bool Adafruit_GPS::parse_GPGSA(const char *nmea) {
-  // $GPGSV,4,1,14,22,87,059,12,01,82,080,23,03,69,248,34,11,67,155,15*7A
+  // $GPGSA,A,3,19,28,14,18,27,22,31,39,,,,,1.7,1.0,1.3*35
   const char *p = nmea;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
+  mode = atoi(p);
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
