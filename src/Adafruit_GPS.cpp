@@ -422,8 +422,7 @@ bool Adafruit_GPS::parse_GPRMC(const char *nmea) {
     angle = atof(p);
 
   p = next_data(p); if (!p) return false;
-  if (',' != *p)
-  {
+  if (',' != *p) {
     uint32_t fulldate = atof(p);
     day = fulldate / 10000;
     month = (fulldate % 10000) / 100;
@@ -437,15 +436,17 @@ bool Adafruit_GPS::parse_PGTOP(const char *nmea) {
   const char *p = nmea;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
-  int value = atoi(p);
-  if (value == 1) {
-    antenna = Adafruit_GPS::ExternalProblemAntenna;
-  } else if (value == 2) {
-    antenna = Adafruit_GPS::InternalAntenna;
-  } else if (value == 3) {
-    antenna = Adafruit_GPS::ExternalAntenna;
-  } else {
-    antenna = Adafruit_GPS::UnknownAntenna;
+  if (',' != *p) {
+    int value = atoi(p);
+    if (value == 1) {
+      antenna = Adafruit_GPS::ExternalProblemAntenna;
+    } else if (value == 2) {
+      antenna = Adafruit_GPS::InternalAntenna;
+    } else if (value == 3) {
+      antenna = Adafruit_GPS::ExternalAntenna;
+    } else {
+      antenna = Adafruit_GPS::UnknownAntenna;
+    }
   }
   return true;
 }
@@ -456,7 +457,8 @@ bool Adafruit_GPS::parse_GPGSV(const char *nmea) {
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
-  satellites_in_views = atoi(p);
+  if (',' != *p)
+    satellites_in_views = atoi(p);
   return true;
 }
 
@@ -465,7 +467,8 @@ bool Adafruit_GPS::parse_GPGSA(const char *nmea) {
   const char *p = nmea;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
-  mode = atoi(p);
+  if (',' != *p)
+    mode = atoi(p);
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
@@ -479,11 +482,14 @@ bool Adafruit_GPS::parse_GPGSA(const char *nmea) {
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
-  PDOP = atof(p);
+  if (',' != *p)
+    PDOP = atof(p);
   p = next_data(p); if (!p) return false;
-  HDOP = atof(p);
+  if (',' != *p)
+    HDOP = atof(p);
   p = next_data(p); if (!p) return false;
-  VDOP = atof(p);
+  if (',' != *p)
+    VDOP = atof(p);
   return true;
 }
 
