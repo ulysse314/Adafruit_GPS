@@ -149,7 +149,8 @@ class Adafruit_GPS {
   float speed, angle;
   float PDOP, HDOP, VDOP;
   bool fix;
-  uint8_t fixquality, satellites;
+  uint8_t fixquality;
+  uint8_t satellites_used;
   uint8_t satellites_in_views;
   enum Antenna antenna;
 
