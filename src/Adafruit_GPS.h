@@ -146,7 +146,9 @@ class Adafruit_GPS {
   // Floating degree * 10000000 (signed).
   int32_t latitude_degree, longitude_degree;
   float geoidheight, altitude;
-  float speed, angle;
+  // speed in m/s
+  float speed;
+  float angle;
   float PDOP, HDOP, VDOP;
   bool fix;
   uint8_t mode;
