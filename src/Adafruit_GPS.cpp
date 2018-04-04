@@ -181,7 +181,7 @@ void Adafruit_GPS::common_init() {
   fix = false; // bool
   milliseconds = 0; // uint16_t
   satellites_in_views = 0;
-  geoidheight = altitude = speed = angle = magvariation = HDOP = 0.0; // float
+  geoidheight = altitude = speed = angle = HDOP = 0.0; // float
   latitude_degree_minute = longitude_degree_minute = latitude_degree = longitude_degree = 0;
 }
 
