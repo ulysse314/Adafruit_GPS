@@ -177,8 +177,8 @@ void Adafruit_GPS::common_init() {
   currentline = line1;
   lastline    = line2;
 
-  hour = minute = seconds = year = month = day =
-    fixquality = 0;
+  hour = minute = seconds = year = month = day = 0;
+  fix_quality = 0;
   fix = false;
   milliseconds = 0;
   satellites_used = 0;
@@ -362,7 +362,7 @@ bool Adafruit_GPS::parse_GPGGA(const char *nmea) {
 
   p = next_data(p); if (!p) return false;
   if (',' != *p)
-    fixquality = atoi(p);
+    fix_quality = atoi(p);
 
   p = next_data(p); if (!p) return false;
   if (',' != *p)
