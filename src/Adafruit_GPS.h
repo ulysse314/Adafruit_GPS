@@ -146,7 +146,8 @@ class Adafruit_GPS {
   // Floating degree * 10000000 (signed).
   int32_t latitude_degree, longitude_degree;
   float geoidheight, altitude;
-  float speed, angle, HDOP;
+  float speed, angle;
+  float PDOP, HDOP, VDOP;
   char mag;
   bool fix;
   uint8_t fixquality, satellites;
@@ -167,6 +168,7 @@ class Adafruit_GPS {
   bool parse_GPRMC(const char *nmea);
   bool parse_PGTOP(const char *nmea);
   bool parse_GPGSV(const char *nmea);
+  bool parse_GPGSA(const char *nmea);
   bool parse_latitude_longitude(const char **nmea);
 
 #if defined(__AVR__) && defined(USE_SW_SERIAL)

@@ -93,6 +93,8 @@ bool Adafruit_GPS::parse(const char *nmea) {
     return parse_PGTOP(nmea);
   } else if (strstr(nmea, "$GPGSV")) {
     return parse_GPGSV(nmea);
+  } else if (strstr(nmea, "$GPGSA")) {
+    return parse_GPGSA(nmea);
   }
   return false;
 }
@@ -451,6 +453,32 @@ bool Adafruit_GPS::parse_GPGSV(const char *nmea) {
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
   satellites_in_views = atoi(p);
+  return true;
+}
+
+bool Adafruit_GPS::parse_GPGSA(const char *nmea) {
+  // $GPGSV,4,1,14,22,87,059,12,01,82,080,23,03,69,248,34,11,67,155,15*7A
+  const char *p = nmea;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  p = next_data(p); if (!p) return false;
+  PDOP = atof(p);
+  p = next_data(p); if (!p) return false;
+  HDOP = atof(p);
+  p = next_data(p); if (!p) return false;
+  VDOP = atof(p);
   return true;
 }
 
