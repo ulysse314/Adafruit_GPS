@@ -179,7 +179,6 @@ void Adafruit_GPS::common_init() {
 
   hour = minute = seconds = year = month = day =
     fixquality = satellites = 0; // uint8_t
-  mag = 0; // char
   fix = false; // bool
   milliseconds = 0; // uint16_t
   satellites_in_views = 0;

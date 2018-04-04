@@ -148,7 +148,6 @@ class Adafruit_GPS {
   float geoidheight, altitude;
   float speed, angle;
   float PDOP, HDOP, VDOP;
-  char mag;
   bool fix;
   uint8_t fixquality, satellites;
   uint8_t satellites_in_views;
