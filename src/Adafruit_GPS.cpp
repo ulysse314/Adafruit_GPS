@@ -414,7 +414,7 @@ bool Adafruit_GPS::parse_GPRMC(const char *nmea) {
   // speed
   p = next_data(p); if (!p) return false;
   if (',' != *p)
-    speed = atof(p) * 1852;
+    speed = atof(p) * 0.514444;
 
   // angle
   p = next_data(p); if (!p) return false;
