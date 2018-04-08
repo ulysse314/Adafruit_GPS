@@ -175,6 +175,7 @@ class Adafruit_GPS {
  private:
   bool paused;
 
+  // need to parse GPVTG (related to heading).
   bool parse_GPGGA(const char *nmea);
   bool parse_GPRMC(const char *nmea);
   bool parse_PGTOP(const char *nmea);
