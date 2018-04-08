@@ -190,6 +190,7 @@ void Adafruit_GPS::common_init() {
   mode = 0;
   mode_selection = '?';
   latitude_degree_minute = longitude_degree_minute = latitude_degree = longitude_degree = 0;
+  antenna = UnknownAntenna;
 }
 
 void Adafruit_GPS::begin(uint32_t baud)
