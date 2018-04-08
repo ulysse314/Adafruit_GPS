@@ -139,22 +139,29 @@ class Adafruit_GPS {
   bool wakeup();
   bool standby();
 
+  // Trame: GPGGA
   uint8_t hour, minute, seconds, year, month, day;
   uint16_t milliseconds;
   // Int degree * 10000000 + floating minute * 100000 (signed).
   int32_t latitude_degree_minute, longitude_degree_minute;
   // Floating degree * 10000000 (signed).
   int32_t latitude_degree, longitude_degree;
+  uint8_t fix_quality;
+  uint8_t satellites_used;
   float geoidheight, altitude;
+  // Trame: GPRMC
+  bool fix;
   // speed in m/s
   float speed;
   float angle;
-  float PDOP, HDOP, VDOP;
-  bool fix;
-  uint8_t mode;
-  uint8_t fix_quality;
-  uint8_t satellites_used;
+  // Trame: GPGSA
+  uint8_t mode; // 1=Fix not available, 2=2D, 3=3D
+  float PDOP;
+  float HDOP;
+  float VDOP;
+  // Trame: GPGSV
   uint8_t satellites_in_views;
+  // Trame: PGTOP
   enum Antenna antenna;
 
   bool waitForSentence(const char *wait, uint8_t max = MAXWAITSENTENCE);
