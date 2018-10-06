@@ -348,9 +348,6 @@ bool Adafruit_GPS::parse_GPGGA(const char *nmea) {
   // found GGA
   const char *p = nmea;
   // get time
-  int32_t degree;
-  long minutes;
-  char degreebuff[10];
   p = next_data(p); if (!p) return false;
   float timef = atof(p);
   uint32_t time = timef;
@@ -390,9 +387,6 @@ bool Adafruit_GPS::parse_GPRMC(const char *nmea) {
   const char *p = nmea;
 
   // get time
-  int32_t degree;
-  long minutes;
-  char degreebuff[10];
   p = next_data(p); if (!p) return false;
   float timef = atof(p);
   uint32_t time = timef;
