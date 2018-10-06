@@ -531,4 +531,6 @@ bool Adafruit_GPS::parse_latitude_longitude(const char **buffer) {
     if ((*buffer)[0] != 'E' && (*buffer)[0] != 'W' && (*buffer)[0] != ',')
       return false;
   }
+
+  return true;
 }
