@@ -190,7 +190,7 @@ void Adafruit_GPS::common_init() {
   mode = 0;
   mode_selection = '?';
   latitude_degree_minute = longitude_degree_minute = latitude_degree = longitude_degree = 0;
-  antenna = UnknownAntenna;
+  antenna = AntennaUnknown;
 }
 
 void Adafruit_GPS::begin(uint32_t baud)
@@ -435,13 +435,13 @@ bool Adafruit_GPS::parse_PGTOP(const char *nmea) {
   if (',' != *p) {
     int value = atoi(p);
     if (value == 1) {
-      antenna = Adafruit_GPS::ExternalAntennaProblem;
+      antenna = AntennaExternalProblem;
     } else if (value == 2) {
-      antenna = Adafruit_GPS::UsingInternalAntenna;
+      antenna = AntennaUsingInternal;
     } else if (value == 3) {
-      antenna = Adafruit_GPS::UsingExternalAntenna;
+      antenna = AntennaUsingExternal;
     } else {
-      antenna = Adafruit_GPS::UnknownAntenna;
+      antenna = AntennaUnknown;
     }
   }
   return true;
@@ -465,8 +465,23 @@ bool Adafruit_GPS::parse_GPGSA(const char *nmea) {
   if (','!= *p)
     mode_selection = *p;
   p = next_data(p); if (!p) return false;
-  if (',' != *p)
-    mode = atoi(p);
+  if (',' != *p) {
+    int modeInteger = atoi(p);
+    switch (modeInteger) {
+    case 0:
+      mode = ModeNoFix;
+      break;
+    case 1:
+      mode = Mode2D;
+      break;
+    case 2:
+      mode = Mode3D;
+      break;
+    default:
+      mode = ModeUnknown;
+      break;
+    }
+  }
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;

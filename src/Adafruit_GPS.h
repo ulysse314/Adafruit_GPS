@@ -105,10 +105,16 @@ All text above must be included in any redistribution
 class Adafruit_GPS {
  public:
   enum Antenna {
-    UnknownAntenna,
-    ExternalAntennaProblem,
-    UsingInternalAntenna,
-    UsingExternalAntenna,
+    AntennaUnknown,
+    AntennaExternalProblem,
+    AntennaUsingInternal,
+    AntennaUsingExternal,
+  };
+  enum Mode {
+    ModeUnknown,
+    ModeNoFix,
+    Mode2D,
+    Mode3D,
   };
 
   void begin(uint32_t baud); 
