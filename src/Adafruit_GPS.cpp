@@ -435,11 +435,11 @@ bool Adafruit_GPS::parse_PGTOP(const char *nmea) {
   if (',' != *p) {
     int value = atoi(p);
     if (value == 1) {
-      antenna = Adafruit_GPS::ExternalProblemAntenna;
+      antenna = Adafruit_GPS::ExternalAntennaProblem;
     } else if (value == 2) {
-      antenna = Adafruit_GPS::InternalAntenna;
+      antenna = Adafruit_GPS::UsingInternalAntenna;
     } else if (value == 3) {
-      antenna = Adafruit_GPS::ExternalAntenna;
+      antenna = Adafruit_GPS::UsingExternalAntenna;
     } else {
       antenna = Adafruit_GPS::UnknownAntenna;
     }

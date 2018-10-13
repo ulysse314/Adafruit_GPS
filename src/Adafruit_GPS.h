@@ -106,9 +106,9 @@ class Adafruit_GPS {
  public:
   enum Antenna {
     UnknownAntenna,
-    ExternalProblemAntenna,
-    InternalAntenna,
-    ExternalAntenna,
+    ExternalAntennaProblem,
+    UsingInternalAntenna,
+    UsingExternalAntenna,
   };
 
   void begin(uint32_t baud); 
