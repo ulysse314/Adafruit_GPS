@@ -187,7 +187,7 @@ void Adafruit_GPS::common_init() {
   PDOP = 0.;
   HDOP = 0.;
   VDOP = 0.;
-  mode = 0;
+  mode = ModeNoFix;
   mode_selection = '?';
   latitude_degree_minute = longitude_degree_minute = latitude_degree = longitude_degree = 0;
   antenna = AntennaUnknown;
@@ -468,17 +468,14 @@ bool Adafruit_GPS::parse_GPGSA(const char *nmea) {
   if (',' != *p) {
     int modeInteger = atoi(p);
     switch (modeInteger) {
-    case 0:
-      mode = ModeNoFix;
-      break;
-    case 1:
+    case 2:
       mode = Mode2D;
       break;
-    case 2:
+    case 3:
       mode = Mode3D;
       break;
     default:
-      mode = ModeUnknown;
+      mode = ModeNoFix;
       break;
     }
   }

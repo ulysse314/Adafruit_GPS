@@ -111,7 +111,6 @@ class Adafruit_GPS {
     AntennaUsingExternal,
   };
   enum Mode {
-    ModeUnknown,
     ModeNoFix,
     Mode2D,
     Mode3D,
@@ -162,7 +161,7 @@ class Adafruit_GPS {
   float angle;
   // Trame: GPGSA
   char mode_selection; // M=Manual, forced to operate in 2D or 3D, A=Automatic, 3D/2D
-  uint8_t mode; // 1=Fix not available, 2=2D, 3=3D
+  Mode mode; // 1=Fix not available, 2=2D, 3=3D
   float PDOP;
   float HDOP;
   float VDOP;
