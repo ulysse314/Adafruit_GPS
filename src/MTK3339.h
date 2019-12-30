@@ -18,8 +18,8 @@ All text above must be included in any redistribution
 ****************************************/
 // Fllybob added lines 34,35 and 40,41 to add 100mHz logging capability 
 
-#ifndef _ADAFRUIT_GPS_H
-#define _ADAFRUIT_GPS_H
+#ifndef MTK3339_H
+#define MTK3339_H
 
 //comment this out if you don't want to include software serial in the library
 #define USE_SW_SERIAL
@@ -102,7 +102,7 @@ All text above must be included in any redistribution
 #endif
 
 
-class Adafruit_GPS {
+class MTK3339 {
  public:
   enum Antenna {
     AntennaUnknown,
@@ -120,12 +120,12 @@ class Adafruit_GPS {
 
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
   #if ARDUINO >= 100 
-    Adafruit_GPS(SoftwareSerial *ser); // Constructor when using SoftwareSerial
+    MTK3339(SoftwareSerial *ser); // Constructor when using SoftwareSerial
   #else
-    Adafruit_GPS(NewSoftSerial  *ser); // Constructor when using NewSoftSerial
+    MTK3339(NewSoftSerial  *ser); // Constructor when using NewSoftSerial
   #endif
 #endif
-  Adafruit_GPS(HardwareSerial *ser); // Constructor when using HardwareSerial
+  MTK3339(HardwareSerial *ser); // Constructor when using HardwareSerial
 
   const char *lastNMEA();
   bool newNMEAreceived();
@@ -198,5 +198,4 @@ class Adafruit_GPS {
   HardwareSerial *gpsHwSerial;
 };
 
-
-#endif
+#endif  // MTK3339_H

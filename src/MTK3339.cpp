@@ -68,7 +68,7 @@ static bool decode_angle(const char *buffer, int32_t *angle_degree_minute, int32
   return true;
 }
 
-bool Adafruit_GPS::parse(const char *nmea) {
+bool MTK3339::parse(const char *nmea) {
   // do checksum check
   // first look if we even have one
   if (nmea[strlen(nmea)-4] != '*')
@@ -99,7 +99,7 @@ bool Adafruit_GPS::parse(const char *nmea) {
   return false;
 }
 
-char Adafruit_GPS::read() {
+char MTK3339::read() {
   char c = 0;
 
   if (paused) return c;
@@ -149,9 +149,9 @@ char Adafruit_GPS::read() {
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
 // Constructor when using SoftwareSerial or NewSoftSerial
 #if ARDUINO >= 100
-Adafruit_GPS::Adafruit_GPS(SoftwareSerial *ser)
+MTK3339::MTK3339(SoftwareSerial *ser)
 #else
-Adafruit_GPS::Adafruit_GPS(NewSoftSerial *ser)
+MTK3339::MTK3339(NewSoftSerial *ser)
 #endif
 {
   common_init();     // Set everything to common state, then...
@@ -160,13 +160,13 @@ Adafruit_GPS::Adafruit_GPS(NewSoftSerial *ser)
 #endif
 
 // Constructor when using HardwareSerial
-Adafruit_GPS::Adafruit_GPS(HardwareSerial *ser) {
+MTK3339::MTK3339(HardwareSerial *ser) {
   common_init();  // Set everything to common state, then...
   gpsHwSerial = ser; // ...override gpsHwSerial with value passed.
 }
 
 // Initialization code used by all constructor types
-void Adafruit_GPS::common_init() {
+void MTK3339::common_init() {
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
   gpsSwSerial = NULL; // Set both to NULL, then override correct
 #endif
@@ -193,7 +193,7 @@ void Adafruit_GPS::common_init() {
   antenna = AntennaUnknown;
 }
 
-void Adafruit_GPS::begin(uint32_t baud)
+void MTK3339::begin(uint32_t baud)
 {
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
   if(gpsSwSerial)
@@ -205,7 +205,7 @@ void Adafruit_GPS::begin(uint32_t baud)
   delay(10);
 }
 
-void Adafruit_GPS::sendCommand(const char *str) {
+void MTK3339::sendCommand(const char *str) {
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
   if(gpsSwSerial)
     gpsSwSerial->println(str);
@@ -214,21 +214,21 @@ void Adafruit_GPS::sendCommand(const char *str) {
     gpsHwSerial->println(str);
 }
 
-bool Adafruit_GPS::newNMEAreceived() {
+bool MTK3339::newNMEAreceived() {
   return recvdflag;
 }
 
-void Adafruit_GPS::pause(bool p) {
+void MTK3339::pause(bool p) {
   paused = p;
 }
 
-const char *Adafruit_GPS::lastNMEA() {
+const char *MTK3339::lastNMEA() {
   recvdflag = false;
   return (char *)lastline;
 }
 
 // read a Hex value and return the decimal equivalent
-uint8_t Adafruit_GPS::parseHex(char c) {
+uint8_t MTK3339::parseHex(char c) {
     if (c < '0')
       return 0;
     if (c <= '9')
@@ -241,7 +241,7 @@ uint8_t Adafruit_GPS::parseHex(char c) {
     return 0;
 }
 
-bool Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
+bool MTK3339::waitForSentence(const char *wait4me, uint8_t max) {
   char str[20];
 
   uint8_t i=0;
@@ -262,19 +262,19 @@ bool Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
   return false;
 }
 
-bool Adafruit_GPS::LOCUS_StartLogger() {
+bool MTK3339::LOCUS_StartLogger() {
   sendCommand(PMTK_LOCUS_STARTLOG);
   recvdflag = false;
   return waitForSentence(PMTK_LOCUS_STARTSTOPACK);
 }
 
-bool Adafruit_GPS::LOCUS_StopLogger() {
+bool MTK3339::LOCUS_StopLogger() {
   sendCommand(PMTK_LOCUS_STOPLOG);
   recvdflag = false;
   return waitForSentence(PMTK_LOCUS_STARTSTOPACK);
 }
 
-bool Adafruit_GPS::LOCUS_ReadStatus() {
+bool MTK3339::LOCUS_ReadStatus() {
   sendCommand(PMTK_LOCUS_QUERY_STATUS);
 
   if (! waitForSentence("$PMTKLOG"))
@@ -321,7 +321,7 @@ bool Adafruit_GPS::LOCUS_ReadStatus() {
 }
 
 // Standby Mode Switches
-bool Adafruit_GPS::standby() {
+bool MTK3339::standby() {
   if (inStandbyMode) {
     return false;  // Returns false if already in standby mode, so that you do not wake it up by sending commands to GPS
   }
@@ -333,7 +333,7 @@ bool Adafruit_GPS::standby() {
   }
 }
 
-bool Adafruit_GPS::wakeup() {
+bool MTK3339::wakeup() {
   if (inStandbyMode) {
    inStandbyMode = false;
     sendCommand("");  // send byte to wake it up
@@ -344,7 +344,7 @@ bool Adafruit_GPS::wakeup() {
   }
 }
 
-bool Adafruit_GPS::parse_GPGGA(const char *nmea) {
+bool MTK3339::parse_GPGGA(const char *nmea) {
   // found GGA
   const char *p = nmea;
   // get time
@@ -382,7 +382,7 @@ bool Adafruit_GPS::parse_GPGGA(const char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_GPRMC(const char *nmea) {
+bool MTK3339::parse_GPRMC(const char *nmea) {
  // found RMC
   const char *p = nmea;
 
@@ -428,7 +428,7 @@ bool Adafruit_GPS::parse_GPRMC(const char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_PGTOP(const char *nmea) {
+bool MTK3339::parse_PGTOP(const char *nmea) {
   const char *p = nmea;
   p = next_data(p); if (!p) return false;
   p = next_data(p); if (!p) return false;
@@ -447,7 +447,7 @@ bool Adafruit_GPS::parse_PGTOP(const char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_GPGSV(const char *nmea) {
+bool MTK3339::parse_GPGSV(const char *nmea) {
   // $GPGSV,4,1,14,22,87,059,12,01,82,080,23,03,69,248,34,11,67,155,15*7A
   const char *p = nmea;
   p = next_data(p); if (!p) return false;
@@ -458,7 +458,7 @@ bool Adafruit_GPS::parse_GPGSV(const char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_GPGSA(const char *nmea) {
+bool MTK3339::parse_GPGSA(const char *nmea) {
   // $GPGSA,A,3,19,28,14,18,27,22,31,39,,,,,1.7,1.0,1.3*35
   const char *p = nmea;
   p = next_data(p); if (!p) return false;
@@ -503,7 +503,7 @@ bool Adafruit_GPS::parse_GPGSA(const char *nmea) {
   return true;
 }
 
-bool Adafruit_GPS::parse_latitude_longitude(const char **buffer) {
+bool MTK3339::parse_latitude_longitude(const char **buffer) {
   if (!buffer) return false;
   // parse out latitude
   *buffer = next_data(*buffer); if (!*buffer) return false;
