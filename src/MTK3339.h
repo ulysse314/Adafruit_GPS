@@ -24,13 +24,12 @@ All text above must be included in any redistribution
 //comment this out if you don't want to include software serial in the library
 #define USE_SW_SERIAL
 
+#include <stdint.h>
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
-  #if ARDUINO >= 100
-    #include <SoftwareSerial.h>
-  #else
-    #include <NewSoftSerial.h>
-  #endif
+class SoftwareSerial;
 #endif
+class HardwareSerial;
+
 
 // different commands to set the update rate from once a second (1 Hz) to 10 times a second (10Hz)
 // Note that these only control the rate at which the position is echoed, to actually speed up the
@@ -91,17 +90,6 @@ All text above must be included in any redistribution
 // how long to wait when we're looking for a response
 #define MAXWAITSENTENCE 10
 
-#if ARDUINO >= 100
- #include "Arduino.h"
-#if defined (__AVR__) && !defined(__AVR_ATmega32U4__)
- #include "SoftwareSerial.h"
-#endif
-#else
- #include "WProgram.h"
- #include "NewSoftSerial.h"
-#endif
-
-
 class MTK3339 {
  public:
   enum Antenna {
@@ -119,11 +107,7 @@ class MTK3339 {
   void begin(uint32_t baud); 
 
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
-  #if ARDUINO >= 100 
-    MTK3339(SoftwareSerial *ser); // Constructor when using SoftwareSerial
-  #else
-    MTK3339(NewSoftSerial  *ser); // Constructor when using NewSoftSerial
-  #endif
+  MTK3339(SoftwareSerial *ser); // Constructor when using SoftwareSerial
 #endif
   MTK3339(HardwareSerial *ser); // Constructor when using HardwareSerial
 
@@ -189,11 +173,7 @@ class MTK3339 {
   bool parse_latitude_longitude(const char **nmea);
 
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
-  #if ARDUINO >= 100
-    SoftwareSerial *gpsSwSerial;
-  #else
-    NewSoftSerial  *gpsSwSerial;
-  #endif
+  SoftwareSerial *gpsSwSerial;
 #endif
   HardwareSerial *gpsHwSerial;
 };

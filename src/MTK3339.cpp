@@ -9,11 +9,13 @@ Written by Limor Fried/Ladyada for Adafruit Industries.
 BSD license, check license.txt for more information
 All text above must be included in any redistribution
 ****************************************/
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  // Only include software serial on AVR platforms (i.e. not on Due).
-  #include <SoftwareSerial.h>
-#endif
 #include "MTK3339.h"
+
+#include <Arduino.h>
+#if defined(__AVR__) && defined(USE_SW_SERIAL)
+// Only include software serial on AVR platforms (i.e. not on Due).
+#include <SoftwareSerial.h>
+#endif
 
 // how long are max NMEA lines to parse?
 #define MAXLINELENGTH 120
@@ -148,11 +150,7 @@ char MTK3339::read() {
 
 #if defined(__AVR__) && defined(USE_SW_SERIAL)
 // Constructor when using SoftwareSerial or NewSoftSerial
-#if ARDUINO >= 100
 MTK3339::MTK3339(SoftwareSerial *ser)
-#else
-MTK3339::MTK3339(NewSoftSerial *ser)
-#endif
 {
   common_init();     // Set everything to common state, then...
   gpsSwSerial = ser; // ...override gpsSwSerial with value passed.
