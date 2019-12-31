@@ -466,6 +466,9 @@ bool MTK3339::parse_GPGSA(const char *nmea) {
   if (',' != *p) {
     int modeInteger = atoi(p);
     switch (modeInteger) {
+    case 1:
+      mode = ModeNoFix;
+      break;
     case 2:
       mode = Mode2D;
       break;
@@ -473,7 +476,7 @@ bool MTK3339::parse_GPGSA(const char *nmea) {
       mode = Mode3D;
       break;
     default:
-      mode = ModeNoFix;
+      mode = ModeUnknown;
       break;
     }
   }

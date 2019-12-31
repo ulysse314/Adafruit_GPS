@@ -99,6 +99,7 @@ class MTK3339 {
     AntennaUsingExternal,
   };
   enum Mode {
+    ModeUnknown,
     ModeNoFix,
     Mode2D,
     Mode3D,
