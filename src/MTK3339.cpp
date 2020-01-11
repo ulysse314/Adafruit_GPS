@@ -12,10 +12,6 @@ All text above must be included in any redistribution
 #include "MTK3339.h"
 
 #include <Arduino.h>
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-// Only include software serial on AVR platforms (i.e. not on Due).
-#include <SoftwareSerial.h>
-#endif
 
 // how long are max NMEA lines to parse?
 #define MAXLINELENGTH 120
@@ -101,21 +97,14 @@ bool MTK3339::parse(const char *nmea) {
   return false;
 }
 
-char MTK3339::read() {
+void MTK3339::read() {
   char c = 0;
 
-  if (paused) return c;
+  if (paused) return;
 
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  if(gpsSwSerial) {
-    if(!gpsSwSerial->available()) return c;
-    c = gpsSwSerial->read();
-  } else
-#endif
-  {
-    if(!gpsHwSerial->available()) return c;
-    c = gpsHwSerial->read();
-  }
+  if(!_gpsSerial->available())
+    return;
+  c = _gpsSerial->read();
 
   //Serial.print(c);
 
@@ -145,30 +134,11 @@ char MTK3339::read() {
   if (lineidx >= MAXLINELENGTH)
     lineidx = MAXLINELENGTH-1;
 
-  return c;
+  return;
 }
-
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-// Constructor when using SoftwareSerial or NewSoftSerial
-MTK3339::MTK3339(SoftwareSerial *ser)
-{
-  common_init();     // Set everything to common state, then...
-  gpsSwSerial = ser; // ...override gpsSwSerial with value passed.
-}
-#endif
 
 // Constructor when using HardwareSerial
-MTK3339::MTK3339(HardwareSerial *ser) {
-  common_init();  // Set everything to common state, then...
-  gpsHwSerial = ser; // ...override gpsHwSerial with value passed.
-}
-
-// Initialization code used by all constructor types
-void MTK3339::common_init() {
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  gpsSwSerial = NULL; // Set both to NULL, then override correct
-#endif
-  gpsHwSerial = NULL; // port pointer in corresponding constructor
+MTK3339::MTK3339(Stream *serial) : _gpsSerial(serial) {
   recvdflag   = false;
   paused      = false;
   lineidx     = 0;
@@ -191,25 +161,12 @@ void MTK3339::common_init() {
   antenna = AntennaUnknown;
 }
 
-void MTK3339::begin(uint32_t baud)
+void MTK3339::begin()
 {
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  if(gpsSwSerial)
-    gpsSwSerial->begin(baud);
-  else
-#endif
-    gpsHwSerial->begin(baud);
-
-  delay(10);
 }
 
 void MTK3339::sendCommand(const char *str) {
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  if(gpsSwSerial)
-    gpsSwSerial->println(str);
-  else
-#endif
-    gpsHwSerial->println(str);
+  _gpsSerial->println(str);
 }
 
 bool MTK3339::newNMEAreceived() {
@@ -252,8 +209,8 @@ bool MTK3339::waitForSentence(const char *wait4me, uint8_t max) {
       str[19] = 0;
       i++;
 
-        if (strstr(str, wait4me))
-	return true;
+      if (strstr(str, wait4me))
+        return true;
     }
   }
 

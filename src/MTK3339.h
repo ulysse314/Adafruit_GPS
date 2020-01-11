@@ -21,15 +21,9 @@ All text above must be included in any redistribution
 #ifndef MTK3339_H
 #define MTK3339_H
 
-//comment this out if you don't want to include software serial in the library
-#define USE_SW_SERIAL
-
 #include <stdint.h>
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-class SoftwareSerial;
-#endif
-class HardwareSerial;
 
+class Stream;
 
 // different commands to set the update rate from once a second (1 Hz) to 10 times a second (10Hz)
 // Note that these only control the rate at which the position is echoed, to actually speed up the
@@ -105,16 +99,12 @@ class MTK3339 {
     Mode3D,
   };
 
-  void begin(uint32_t baud); 
+  MTK3339(Stream *serial);
 
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  MTK3339(SoftwareSerial *ser); // Constructor when using SoftwareSerial
-#endif
-  MTK3339(HardwareSerial *ser); // Constructor when using HardwareSerial
+  void begin();
 
   const char *lastNMEA();
   bool newNMEAreceived();
-  void common_init();
 
   void sendCommand(const char *);
 
@@ -123,7 +113,7 @@ class MTK3339 {
   bool parseNMEA(char *response);
   uint8_t parseHex(char c);
 
-  char read();
+  void read();
   bool parse(const char *nmea);
 
   bool wakeup();
@@ -173,10 +163,7 @@ class MTK3339 {
   bool parse_GPGSA(const char *nmea);
   bool parse_latitude_longitude(const char **nmea);
 
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  SoftwareSerial *gpsSwSerial;
-#endif
-  HardwareSerial *gpsHwSerial;
+  Stream *const _gpsSerial;
 };
 
 #endif  // MTK3339_H
